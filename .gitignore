@@ -1,0 +1,16 @@
+# course config files
+*.yaml
+
+# gradle
+.gradle/
+build
+
+
+# idea config
+.idea
+
+# old stages
+/In-Memory Notepad/*
+!/In-Memory Notepad/task/
+/In-Memory Notepad/task/*
+!/In-Memory Notepad/task/main.go

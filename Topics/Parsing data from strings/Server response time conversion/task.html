@@ -1,0 +1,7 @@
+<div class="step-text">
+<p></p>
+<p>Your friend Kenny is currently analyzing server response times. His Go program receives a log that lists the response times in milliseconds, e.g., <code class="java">"1337ms"</code> as a <code class="java">string</code>, and using slice expressions, extracts the numeric part (<code class="java">"1337"</code>) of the log.</p>
+<p>However, Kenny needs the response times in seconds for easier analysis. Your task is to help Kenny write the additional required code to convert the response time from <code class="java">string</code> to a <code class="java">float64</code> representation of seconds and then print it out with two decimal points.</p>
+<p><strong>Tip:</strong> You can divide the <code class="java">responseTime</code> milliseconds by <code class="java">1000</code> to convert them into seconds.</p>
+<p></p><div class="alert alert-primary">This task uses slice expressions to remove the <code class="java">"ms"</code> suffix from the input log. However, don't be scared! You don't need to know how slice expressions work to solve this task. Your only objective is to convert the response time to seconds, represented as a <code class="java">float64</code> type.</div><br><b>Sample Input:</b><br><pre><code class="language-no-highlight">1337ms</code></pre><br><b>Sample Output:</b><br><pre><code class="language-no-highlight">Response time: 1.34 seconds</code></pre><br><br><br><font color="gray">Memory limit: 256 MB</font><br><font color="gray">Time limit: 8 seconds</font><br><br>
+</div>

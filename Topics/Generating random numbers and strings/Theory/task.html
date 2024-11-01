@@ -1,0 +1,134 @@
+<div class="step-text">
+<p>When you write code, you may need to create different outcomes each time it's executed. One way to achieve this is by using random numbers. <strong>Random numbers</strong> are sequences of numbers that don't follow a specific order. Random numbers have many uses in programming, such as in blockchain applications for digital encryption or simulation projects to generate data. Incorporating random numbers into your code makes it more versatile and adaptable to various scenarios.</p>
+<p>This topic will focus on working with random numbers in Go, covering their generation and how to use them to create random strings.</p>
+<h5 id="generating-random-integers-and-floats">Generating random integers and floats</h5>
+<p>In Go, there is a package <code class="language-go">math/rand</code> that allows the generation of random integers and floating numbers. To do so, two commands are used: <code class="language-go">rand.Int()</code> and <code class="language-go">rand.Intn()</code> . The difference is that the former does not accept any arguments while the latter takes only one argument, which shows the upper bound of the desired range. The thing that should be noted is that the lower bound in the generating random numbers is 0, making the range of random number generation [0, n), where n is the upper bound. Let's see it in practice.</p>
+<pre><code class="language-go">package main
+  
+import (
+    "fmt"
+    "math/rand"
+)
+  
+func main() {
+    fmt.Println(rand.Int())
+    fmt.Println(rand.Intn(20))
+}</code></pre>
+<p>If you run the code, you'll see that the first output is a large integer, while the second is within the range of [0, 20). When you run the code again, you'll notice that the same numbers are generated. This happens because the same seed number is used each time. To avoid this behavior, you can change the seed number every time the code is executed. The <code class="language-go">time</code> package is often used to achieve this. By adding the line <code class="language-go">rand.Seed(time.Now().UnixNano())</code> before calling <code class="language-go">rand.Int()</code>, you can ensure that a different seed number is used each time, resulting in different random numbers being generated. Try importing the <code class="language-go">time</code> package and adding this line of code to your program. You should now see different results each time you run the program, demonstrating how random integers can be generated in Go.</p>
+<p></p><div class="alert alert-primary">Starting with Go version 1.20, the <code class="language-go">math/rand</code> package automatically seeds the global random number generator, making it random by default. So, If you're using Go 1.20 or later, there's no need to call <code class="language-go">rand.Seed()</code>. You can read the <a href="https://tip.golang.org/doc/go1.20#:~:text=the%20standard%20library.-,math/rand,-The%20math/rand" rel="noopener noreferrer nofollow" target="_blank">Go 1.20 release notes</a> for more information about these changes.</div>
+<p>The way of generating random floating numbers is the same. <code class="language-go">rand.Float64()</code> generates random floating numbers in the interval of [0.0, 1.0). This function does not accept any arguments; therefore, some mathematical operations should be added if we want to change the intervals. For example, <code class="language-go">5 + rand.Float64() * 10</code> will generate floating numbers in the interval of [5, 15).</p>
+<h5 id="alternative-package-to-generate-random-numbers">Alternative package to generate random numbers</h5>
+<p>The <code class="language-go">math/rand</code> package is useful for generating random numbers in applications that do not require high levels of security. However, it should not be used in projects where security is a critical concern. This is because the generated numbers can be easily predicted since the sequence of random numbers is deterministic. This means that future values can be predicted from past outputs. Instead, the <code class="language-go">crypto/rand</code> package should be used for security-critical projects.</p>
+<p>Here's an example of how to use the <code class="language-go">crypto/rand</code> package to generate random numbers:</p>
+<pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "crypto/rand"
+    "math/big"
+)
+
+func main() {
+    randomNumber, _ := rand.Int(rand.Reader, big.NewInt(100))
+    fmt.Println(randomNumber)
+  
+    randomPrimeNumber, _ := rand.Prime(rand.Reader, 8)
+    fmt.Println(randomPrimeNumber)
+}</code></pre>
+<p>Here <code class="language-go">rand.Reader</code> is the global instance of a secure random number generator; <code class="language-go">rand.Int()</code> generates random numbers in the interval of <code class="language-go">[0, big.NewInt(100))</code>; <code class="language-go">rand.Prime()</code> on the other hand, returns a random prime number with an 8-bit length. If instead of 8 any other n integer is inputted such that n &gt; 1, then the random number would be n-bit length. </p>
+<p>So, there are two packages that can be used to work with random numbers: <code class="language-go">math/rand</code> and <code class="language-go">crypto/rand</code>. </p>
+<h5 id="generating-random-characters-and-strings">Generating random characters and strings</h5>
+<p>You now know how to generate random numbers with two different packages. With this knowledge, you can also obtain distinct characters from the charset and random strings with the specified length. Let's start with the characters.</p>
+<pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "math/rand"
+    "time"
+)
+
+func main() {
+    rand.Seed(time.Now().UnixNano())
+
+    charset := "abcdefghijklmnopqrstuvwxyz"
+    randomPosition := rand.Intn(len(charset))
+    c := charset[randomPosition]
+
+    fmt.Println(string(c))
+}</code></pre>
+<p>To get various letters, first, you need some kind of characters bank, and <code class="language-go">charset</code> in the above code plays the role of the char bank. Then by generating random integers, you could access different positions in the set. However, we should not obtain a random number more than the length of our set. Therefore, <code class="language-go">rand.Intn()</code> is used with the argument of <code class="language-go">len(charset)</code>. So that our interval lies within <code class="language-go">[0, len(charset))</code>. And after generating a random position, you could assign a character in this random position in the character set to a new variable. </p>
+<p>To generate random strings, you need to work with slices. This is because you need to collect random characters generated from the charset. For example, the following code will output us a random string with a length of 10.</p>
+<pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "math/rand"
+    "time"
+)
+
+func main() {
+    rand.Seed(time.Now().UnixNano())
+
+    charset := "abcdefghijklmnopqrstuvwxyz"
+    length := 10
+
+    random := make([]byte, length)
+    for i := 0; i &lt; length; i++ {
+        randomPosition := rand.Intn(len(charset))
+        c := charset[randomPosition]
+        random[i] = c
+    }
+
+    str := string(random)
+    fmt.Println(str)
+}</code></pre>
+<p>The thing to note is that our slice is of byte type. As we know, in Go, there is no specific <em>char</em> data type; instead, it uses <code class="language-go">byte</code>. Therefore, you populate our slice with the byte type. Generally speaking, byte type represents ASCII characters. This fact leads us to another way of generating random numbers.</p>
+<p>In the ASCII table, the upper-case letters lie within [65, 90], and lower-case letters are in the interval of [97, 122]. Therefore, you need to generate random numbers in the desired interval depending on what kind of letters you want. For instance, the following code shows how upper-case and lower-case strings can be generated using ASCII.</p>
+<pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "math/rand"
+    "time"
+)
+
+func main() {
+    rand.Seed(time.Now().UnixNano())
+    length := 10
+
+    randomUpperCaseString := make([]byte, length)
+    for i := 0; i &lt; length; i++ {
+        randomUpperCaseString[i] = byte(65 + rand.Intn(26))
+    }
+
+    str1 := string(randomUpperCaseString)
+    fmt.Println(str1)
+
+    randomLowerCaseString := make([]byte, length)
+    for i := 0; i &lt; length; i++ {
+        randomLowerCaseString[i] = byte(97 + rand.Intn(26))
+    }
+
+    str2 := string(randomLowerCaseString)
+    fmt.Println(str2)
+}</code></pre>
+<p>In the first line, the string is upper-case, while in the second, it is lower-case. The same logic can be used to generate random characters instead of using a predefined character set. Also, one thing to note:</p>
+<ul>
+<li>
+<p>In projects where random passwords are generated (which are strings), the interval of ASCII can be changed so that not only upper-case or lower-case letters lie within the range, but also numbers' and specific characters' ASCII representation can be included in the interval. The respective ASCII numbers can be found on the <a href="https://www.asciitable.com/" rel="noopener noreferrer nofollow" target="_blank">ASCII table</a></p>
+</li>
+</ul>
+<h5 id="conclusion">Conclusion</h5>
+<p>In this topic, you learned how random numbers are generated in Go; this random number generation can help generate random characters and even random strings of different types. The key points of this topic are:</p>
+<ol>
+<li>
+<p>The random characters in Go can be generated using <code class="language-go">math/rand</code> or <code class="language-go">crypto/rand</code>packages.</p>
+</li>
+<li>
+<p>The <code class="language-go">crypto/rand</code> package offers enhanced security in generating random numbers, producing truly random values. Therefore, if a developer is working on an application where security is a critical aspect, they should use this package to generate their random numbers.</p>
+</li>
+<li>
+<p>The random characters and strings can be generated using a predefined charset or using the ASCII table. </p>
+</li>
+</ol>
+</div>

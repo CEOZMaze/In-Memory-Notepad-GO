@@ -1,0 +1,31 @@
+<div class="step-text">
+<p></p>
+<p>Below you will see a small program that uses the <code class="language-go">Grow()</code> function to preallocate the size of the buffer slice:</p>
+<pre><code class="language-go">package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+func main() {
+    var b strings.Builder
+    b.Grow(?)
+
+    b.WriteString("Player list:\n")
+    for i := 1; i &lt; 5; i++ {
+        b.WriteString(fmt.Sprintf("Player %d\n", i))
+    }
+
+    fmt.Print(b.String())
+}
+
+// Output:
+// Player list:
+// Player 1
+// Player 2
+// Player 3
+// Player 4
+</code></pre>
+<p>Please enter below an integer number we should pass to the <code class="language-go">Grow()</code> method with the exact capacity or an estimated capacity to preallocate the size of the buffer slice required to store the string the program needs to build.</p>
+</div>
